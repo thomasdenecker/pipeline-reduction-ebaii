@@ -14,4 +14,6 @@ Plusieurs fichiers :
 
 - Tableau de données réduites pouvant aboutir à une table de comptage
 
-(à compléter)
+## Lieu d'utilisation de ce pipeline 
+
+Ce pipeline sera utilisé sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
