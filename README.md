@@ -17,3 +17,5 @@ Plusieurs fichiers :
 ## Lieu d'utilisation de ce pipeline 
 
 Ce pipeline sera utilisé sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
+
+(à compléter)
