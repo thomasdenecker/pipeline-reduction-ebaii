@@ -3,7 +3,7 @@ genome:
 dataDir:
    DataPOC/
 chr:
-   "18"
+   "NC_014443.2"
 nbAlign:
    10000
 #rnaType: # "paired-end" or "single-end" (nammed with "R1.fastq.gz" suffixe)

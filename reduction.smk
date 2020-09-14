@@ -21,19 +21,57 @@ rule all :
 
 rule uncompress:
   output:
-    "{sample}.fastq"
+    "Tmp/{sample}.fastq"
   input:
-    expand(config["dataDir"]+"{sample}_R{R}.fastq.gz", sample=SAMPLES, R=["1","2"])
+    config["dataDir"]+"{sample}.fastq.gz"
   log:
     "Logs/{sample}_uncompress.log"
-  shell:
-    "gunzip -c {input} > {output} "    
+  run:
+    shell("gunzip -c {input} > {output} ")
+#rule uncompress:
+#  output:
+#    R1="Tmp/{sample}_R1.fastq",
+#    R2="Tmp/{sample}_R2.fastq"
+#  input:
+#    R1=config["dataDir"]+"{sample}_R1.fastq.gz",
+#    R2=config["dataDir"]+"{sample}_R2.fastq.gz"
+#  log:
+#    "Logs/{sample}_uncompress.log"
+#  run:
+#    shell("gunzip -c {input.R1} > {output.R1} ")
+#    shell("gunzip -c {input.R2} > {output.R2} ")
 
-
-rule extract_reads:
+rule create_fastq:
   output:
     R1=config["dataDir"]+"{sample}_R1_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq",
     R2=config["dataDir"]+"{sample}_R2_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq" 
+  input:
+    "Tmp/{sample}_selectok.sam"
+  log:
+    "Logs/{sample}_extract.log"
+  conda:
+    "samtool.yaml"
+  shell:
+    "samtools fastq -n -1 {output.R1} -2 {output.R2} Tmp/{wildcards.sample}_select.sam "
+
+rule extract_reads3:
+  output:
+    select="Tmp/{sample}_select3.sam",
+    end="Tmp/{sample}_selectok.sam"
+  input:
+    "Tmp/{sample}_select2ok.sam"
+  log:
+    "Logs/{sample}_extract.log"
+  conda:
+    "samtool.yaml"
+  shell:
+    "samtools view {input} | grep "+config["chr"]+" >> {output.select} ; "
+    "cp {output.select} {output.end} "
+
+rule extract_reads2:
+  output:
+    select="Tmp/{sample}_select2.sam",
+    end="Tmp/{sample}_select2ok.sam"
   input:
     "Tmp/{sample}.bam"
   log:
@@ -41,10 +79,23 @@ rule extract_reads:
   conda:
     "samtool.yaml"
   shell:
-    "samtools view -H {input} > Tmp/{sample}_select.sam "
-    "samtools view {input} | head -n "+str(config["nbAlign"])+" | grep -v "+config["chr"]+" >> Tmp/{sample}_select.sam "
-    "samtools view {input} | grep "+config["chr"]+" >> Tmp/{sample}_select.sam "
-    "samtools fastq -n -1 {output.R1} -2 {output.R2} Tmp/{sample}_select.sam "
+    "set +e; samtools view {input} | head -n "+str(config["nbAlign"])+" | grep -v "+config["chr"]+" >> {output.select} ; "
+    "cp {output.select} {output.end} "
+
+
+rule extract_reads1:
+  output:
+    select="Tmp/{sample}_select1.sam",
+    end="Tmp/{sample}_select1ok.sam"
+  input:
+    "Tmp/{sample}.bam"
+  log:
+    "Logs/{sample}_extract.log"
+  conda:
+    "samtool.yaml"
+  shell:
+    "samtools view -H {input} > {output.select} ; "
+    "cp {output.select} {output.end} "
 
 
 rule hisat2_mapping:
@@ -53,14 +104,14 @@ rule hisat2_mapping:
   input:
 #    R1=config["dataDir"]+"{sample}.fastq.gz" if config["rnaType"]=="single-end" else ??
     expand("Tmp/GenomeIdx/GenomeIdx.{idx}.ht2", idx=IDX),
-    R1=config["dataDir"]+"{sample}_R1.fastq",
-    R2=config["dataDir"]+"{sample}_R2.fastq"
+    R1="Tmp/{sample}_R1.fastq",
+    R2="Tmp/{sample}_R2.fastq"
   log:
     "Logs/{sample}_bwt2_mapping.log"
   conda: 
     "mapping.yml"
   shell:
-    "hisat2 -x Tmp/GenomeIdx -k 1 --no-mixed --rna-strandness FR -1 {input.R1} -2 {input.R2} 2> {log} | samtools view -b -o {output}"
+    "hisat2 -x Tmp/GenomeIdx/GenomeIdx -k 1 --no-mixed --rna-strandness FR -1 {input.R1} -2 {input.R2} 2> {log} | samtools view -b -o {output}"
 #  run: 
 #    """
 #     if (config["rnaType"]=="paired-end"):
@@ -72,17 +123,19 @@ rule hisat2_mapping:
 
 rule genome_hisat2_index:
   output:
-    expand("Tmp/GenomeIdx/GenomeIdx.{ext}.bt2", ext=IDX)
+    #directory("Tmp/GenomeIdx"),
+    expand("Tmp/GenomeIdx/GenomeIdx.{ext}.ht2", ext=IDX)
   input:
-    fna=config["dataDir"]+config["genome"]+".fna",
-    idx="Tmp/GenomeIdx"
+    fna=config["dataDir"]+config["genome"]
+  params:
+    idx="Tmp/GenomeIdx/GenomeIdx"
   conda:
     "hisat2.yml"
   log:
     log1="Logs/genome_hisat2_index.log1",
     log2="Logs/genome_hisat2_index.log2"
   shell: 
-    "hisat2-build {input.fna} {input.idx} 1>{log.log1} 2>{log.log2}"
+    "hisat2-build {input.fna} {params.idx} 1>{log.log1} 2>{log.log2}"
 
 
 rule fastqc:
@@ -90,7 +143,7 @@ rule fastqc:
     "FastQC/{sample}_fastqc.zip",
     "FastQC/{sample}_fastqc.html"
   input: 
-    config["dataDir"]+"{sample}.fastq.gz"
+    "Tmp/{sample}.fastq"
   log:
     log1="Logs/{sample}_fastqc.log1",
     log2="Logs/{sample}_fastqc.log2"
