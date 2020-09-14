@@ -5,7 +5,7 @@ dataDir:
 chr:
    "18"
 nbAlign:
-   1000000
+   10000
 #rnaType: # "paired-end" or "single-end" (nammed with "R1.fastq.gz" suffixe)
 #   paired-end 
 condaDir:

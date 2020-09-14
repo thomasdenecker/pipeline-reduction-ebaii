@@ -5,35 +5,35 @@ rule all :
   input :
     expand("FastQC/{sample}_R1_fastqc.html", sample=SAMPLES),
     expand("FastQC/{sample}_R2_fastqc.html", sample=SAMPLES),
-    expand(config["dataDir"]+"{sample}_R{R}_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq.gz", sample=SAMPLES, R=["1","2"])
+    expand(config["dataDir"]+"{sample}_R{R}_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq", sample=SAMPLES, R=["1","2"])
 
 
-rule compress:
-  output:
-    "{sample}.fastq.gz"
-  input:
-    "{sample}.fastq"
-  log:
-    "Logs/{sample}_compress.log"
-  shell:
-    "gzip {input}"    
+# rule compress:
+#  output:
+#    expand(config["dataDir"]+"{sample}_R{R}_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq.gz", sample=SAMPLES, R=["1","2"])
+#  input:
+#    expand(config["dataDir"]+"{sample}_R{R}_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq", sample=SAMPLES, R=["1","2"])
+#  log:
+#    "Logs/compress.log"
+#  shell:
+#    "gzip {input}"    
 
 
 rule uncompress:
   output:
     "{sample}.fastq"
   input:
-    "{sample}.fastq.gz"
+    expand(config["dataDir"]+"{sample}_R{R}.fastq.gz", sample=SAMPLES, R=["1","2"])
   log:
     "Logs/{sample}_uncompress.log"
   shell:
-    "gunzip {input}"    
+    "gunzip -c {input} > {output} "    
 
 
 rule extract_reads:
   output:
-    config["dataDir"]+"{sample}_R1_red.fastq",
-    config["dataDir"]+"{sample}_R2_red.fastq"
+    R1=config["dataDir"]+"{sample}_R1_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq",
+    R2=config["dataDir"]+"{sample}_R2_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq" 
   input:
     "Tmp/{sample}.bam"
   log:
@@ -44,7 +44,7 @@ rule extract_reads:
     "samtools view -H {input} > Tmp/{sample}_select.sam "
     "samtools view {input} | head -n "+str(config["nbAlign"])+" | grep -v "+config["chr"]+" >> Tmp/{sample}_select.sam "
     "samtools view {input} | grep "+config["chr"]+" >> Tmp/{sample}_select.sam "
-    "samtools fastq -n -1 "+config["dataDir"]+"{sample}_R1_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq -2 "+config["dataDir"]+"{sample}_R2_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq {input} "
+    "samtools fastq -n -1 {output.R1} -2 {output.R2} Tmp/{sample}_select.sam "
 
 
 rule hisat2_mapping:
@@ -52,7 +52,7 @@ rule hisat2_mapping:
     "Tmp/{sample}.bam"
   input:
 #    R1=config["dataDir"]+"{sample}.fastq.gz" if config["rnaType"]=="single-end" else ??
-    expand("Tmp/GenomeIdx.{idx}.ht2", idx=IDX),
+    expand("Tmp/GenomeIdx/GenomeIdx.{idx}.ht2", idx=IDX),
     R1=config["dataDir"]+"{sample}_R1.fastq",
     R2=config["dataDir"]+"{sample}_R2.fastq"
   log:
@@ -72,10 +72,10 @@ rule hisat2_mapping:
 
 rule genome_hisat2_index:
   output:
-    expand("Tmp/GenomeIdx.{ext}.bt2", ext=IDX)
+    expand("Tmp/GenomeIdx/GenomeIdx.{ext}.bt2", ext=IDX)
   input:
     fna=config["dataDir"]+config["genome"]+".fna",
-    idx=expand("Tmp/GenomeIdx.{idx}.ht2", idx=IDX)
+    idx="Tmp/GenomeIdx"
   conda:
     "hisat2.yml"
   log:
@@ -83,6 +83,7 @@ rule genome_hisat2_index:
     log2="Logs/genome_hisat2_index.log2"
   shell: 
     "hisat2-build {input.fna} {input.idx} 1>{log.log1} 2>{log.log2}"
+
 
 rule fastqc:
   output: 
