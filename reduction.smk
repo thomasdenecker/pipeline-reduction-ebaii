@@ -46,7 +46,7 @@ rule create_fastq:
     R1=config["dataDir"]+"{sample}_R1_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq",
     R2=config["dataDir"]+"{sample}_R2_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq" 
   input:
-    "Tmp/{sample}_selectok.sam"
+    "Tmp/{sample}_select.sam"
   log:
     "Logs/{sample}_extract.log"
   conda:
@@ -54,24 +54,10 @@ rule create_fastq:
   shell:
     "samtools fastq -n -1 {output.R1} -2 {output.R2} Tmp/{wildcards.sample}_select.sam "
 
-rule extract_reads3:
-  output:
-    select="Tmp/{sample}_select3.sam",
-    end="Tmp/{sample}_selectok.sam"
-  input:
-    "Tmp/{sample}_select2ok.sam"
-  log:
-    "Logs/{sample}_extract.log"
-  conda:
-    "samtool.yaml"
-  shell:
-    "samtools view {input} | grep "+config["chr"]+" >> {output.select} ; "
-    "cp {output.select} {output.end} "
 
-rule extract_reads2:
+rule extract_reads:
   output:
-    select="Tmp/{sample}_select2.sam",
-    end="Tmp/{sample}_select2ok.sam"
+    "Tmp/{sample}_select.sam",
   input:
     "Tmp/{sample}.bam"
   log:
@@ -79,23 +65,10 @@ rule extract_reads2:
   conda:
     "samtool.yaml"
   shell:
-    "set +e; samtools view {input} | head -n "+str(config["nbAlign"])+" | grep -v "+config["chr"]+" >> {output.select} ; "
-    "cp {output.select} {output.end} "
-
-
-rule extract_reads1:
-  output:
-    select="Tmp/{sample}_select1.sam",
-    end="Tmp/{sample}_select1ok.sam"
-  input:
-    "Tmp/{sample}.bam"
-  log:
-    "Logs/{sample}_extract.log"
-  conda:
-    "samtool.yaml"
-  shell:
-    "samtools view -H {input} > {output.select} ; "
-    "cp {output.select} {output.end} "
+    "samtools view -H {input} > {output} ; "
+    "set +o pipefail ; "
+    "samtools view {input.bam} | head -n "+str(config["nbAlign"])+" | grep -v "+config["chr"]+" >> {output} ; "
+    "samtools view {input.bam} | grep "+config["chr"]+" >> {output} ; "
 
 
 rule hisat2_mapping:
