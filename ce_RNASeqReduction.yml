@@ -1,0 +1,12 @@
+channels:
+- conda-forge
+- bioconda
+dependencies:
+- python=3.7.6 # Specify python version (not required but can help with downstream conflicts)
+- snakemake-minimal=5.10.0 # The workflow manager
+- wget=1.20.1 # For downloading files
+- fastqc=0.11.9 # For fastqc control quality 
+- hisat2=2.2.1 # For mapping reads to a genome
+- samtools=1.10 # For sorting/filtering bam
+
+

@@ -1,0 +1,14 @@
+genome:
+   "DataPOC/genome.fna"
+dataDir:
+   "DataPOC/"
+dataRes:
+   "DataRed/"
+chr:
+   "NC_014443.2"
+nbAlign:
+   10000
+#rnaType: # "paired-end" or "single-end" (nammed with "R1.fastq.gz" suffixe)
+#   paired-end 
+condaDir:
+   "condaEnv4Smk/"
