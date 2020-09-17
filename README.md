@@ -53,14 +53,20 @@ Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
 
 ## Lieu d'utilisation de ce pipeline 
 
-Utilisé sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
+### Préparation des données test
+
++ Créer le répertoire de données ("DataPOC" pour le jeu de donénes test) et y rapatrier la séquence du genome et les RNASeq
++ Adapter à votre arborescence de fichiers le fichier de paramétrage du pipeline (éditer data.yml)
+
+### sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
+
++ Charger les modules nécessaires : `module load slurm-drmaa snakemake fastqc samtools hisat2 `
++ Lancer le pipeline : `snakemake --drmaa --jobs=4 -s reduction.smk --configfile data.yml `
 
 ### sur un poste de travail unix + conda:
 
 + Créer un environnement conda dédié (cf. fichier yml) : `conda env create -n RNASeqReduction -f ce_RNASeqReduction.yml`
 + Activer cet environement dédié : `conda activate RNASeqReduction`
-+ Créer le répertoire de données ("DataPOC" pour le jeu de donénes test) et y rapatrier la séquence du genome et les RNASeq
-+ Adapter à votre arborescence de fichiers le fichier de paramétrage du pipeline (éditer data.yml)
 + Lancer le pipeline : `snakemake -s reduction.smk --configfile data.yml`
 
 (à compléter)
