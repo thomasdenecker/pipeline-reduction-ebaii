@@ -2,6 +2,8 @@ genome:
    genome.fna
 dataDir:
    DataPOC/
+dataRes:
+   DataRed/
 chr:
    "NC_014443.2"
 nbAlign:
