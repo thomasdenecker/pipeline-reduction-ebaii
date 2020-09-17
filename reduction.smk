@@ -76,7 +76,7 @@ rule genome_hisat2_index:
   output:
     expand("Tmp/GenomeIdx/GenomeIdx.{ext}.ht2", ext=IDX)
   input:
-    fna=config["dataDir"]+config["genome"]
+    fna=config["genome"]
   params:
     idx="Tmp/GenomeIdx/GenomeIdx"
   conda:
