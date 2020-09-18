@@ -36,6 +36,7 @@ Etapes suivies :
 - TODO mapping d'un des fichiers FASTQ.GZ réduits sur le génome pour vérification (avec hisat2)
 
 *temporaire : les fichiers résultants ne sont pas conservés une fois qu'ils ne servent plus afin d'éviter la saturation de l'espace disque
+
 **remarque : le nombre de reads résultants n'est pas exact à "n" + nombre de reads mappés sur le chromosome choisi (dépend du nombre de reads mappés sur le chromosome choisi inclus dans les "n" premiers reads ainsi que, en cas de séquençage paired-end, du nombre de reads mappés sans sa paire)
 
 ## Paramétrages
