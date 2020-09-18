@@ -51,8 +51,7 @@ Editer afin de modifier les valeurs définies par défaut pour le jeu de donnée
 ## Jeu de données test
 
 Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
-- RNAseq paired-end (attention à renommer les "_1." en "_R1.") : [SRR4308679_R1.fastq.gz](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_1.fastq.gz) et [SRR4308679_R2.fastq.gz](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_2.fastq.gz,) 
-<a href="ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_1.fastq.gz">SRR4308679_R1.fastq.gz</a>
+- RNAseq paired-end (attention à renommer les "_1." en "_R1.") SRR4308679_R1.fastq.gz et SRR4308679_R2.fastq.gz : ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_1.fastq.gz ; ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_2.fastq.gz 
 - genome GCF_000214025.2 : [genome.fna](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/214/015/GCF_000214015.3_version_140606/GCF_000214015.3_version_140606_genomic.fna.gz)
 
 ## Lieu d'utilisation de ce pipeline 
