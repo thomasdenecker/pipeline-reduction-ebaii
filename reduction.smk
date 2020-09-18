@@ -9,10 +9,10 @@ rule all :
 
 
 rule compress:
-  input:
-    config["dataRes"]+"{sampleRed}"+config["chr"]+"_"+str(config["nbAlign"])+".fastq"
   output:
     config["dataRes"]+"{sampleRed}"+config["chr"]+"_"+str(config["nbAlign"])+".fastq.gz"
+  input:
+    config["dataRes"]+"{sampleRed}"+config["chr"]+"_"+str(config["nbAlign"])+".fastq"
   log:
     "Logs/compress_{sampleRed}"+config["chr"]+"_"+str(config["nbAlign"])+".log"
   shell:
@@ -51,7 +51,7 @@ rule extract_reads:
 
 rule hisat2_mapping:
   output:
-    "Tmp/{sample}.bam"
+    temp("Tmp/{sample}.bam")
   input:
 #    R1=config["dataDir"]+"{sample}.fastq.gz" if config["rnaType"]=="single-end" else ??
     expand("Tmp/GenomeIdx/GenomeIdx.{idx}.ht2", idx=IDX),
@@ -103,7 +103,7 @@ rule fastqc:
 
 rule uncompress:
   output:
-    "Tmp/{sample}.fastq"
+    temp("Tmp/{sample}.fastq")
   input:
     config["dataDir"]+"{sample}.fastq.gz"
   log:

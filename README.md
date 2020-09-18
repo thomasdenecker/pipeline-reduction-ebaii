@@ -25,16 +25,19 @@ La réduction pour chaque fichier FASTQ.GZ est rélisée avec 2 sélections succ
 - les "n" premiers reads du FASTQ (autres que les reads déjà sélectionnés ci-dessus) afin de conserver une part de la variabilité des reads.
 
 Etapes suivies :
-- contrôle qualité des fichiers FASTQ.GZ (avec fastqc)
+- décompression des fichiers FATSQ.GZ (avec gunzip, temporaire*)
+- contrôle qualité des fichiers FASTQ (avec fastqc)
 - création de l'index pour le logiciel de mapping (avec hisat2)
-- mapping des reads de chaque fichier FASTQ.GZ (avec hisat2)
+- mapping des reads de chaque fichier FASTQ.GZ (avec hisat2, temporaire*)
 - selection des reads mappés sur le chromosome choisi (avec samtools)
-- selection des "n" premiers reads (avec samtools + bash)
+- selection des "n" premiers reads (avec samtools + bash, remarque**)
 - création des fichiers FASTQ réduits (avec samtools)
 - compression des fichiers FASTQ réduits (avec gzip)
 - TODO mapping d'un des fichiers FASTQ.GZ réduits sur le génome pour vérification (avec hisat2)
 
-Remarque : le nombre de reads résultants n'est pas exact à "n" + nombre de reads mappés sur le chromosome choisi (dépend du nombre de reads mappés sur le chromosome choisi inclus dans les "n" premiers reads ainsi que, en cas de séquençage paired-end, du nombre de reads mappés sans sa paire)
+*temporaire : les fichiers résultants ne sont pas conservés une fois qu'ils ne servent plus afin d'éviter la saturation de l'espace disque
+
+**remarque : le nombre de reads résultants n'est pas exact à "n" + nombre de reads mappés sur le chromosome choisi (dépend du nombre de reads mappés sur le chromosome choisi inclus dans les "n" premiers reads ainsi que, en cas de séquençage paired-end, du nombre de reads mappés sans sa paire)
 
 ## Paramétrages
 
@@ -55,12 +58,13 @@ Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
 
 ### Préparation des données test
 
-+ Créer le répertoire de données ("DataPOC" pour le jeu de donénes test) et y rapatrier la séquence du genome et les RNASeq
-+ Adapter à votre arborescence de fichiers le fichier de paramétrage du pipeline (éditer data.yml)
++ Créer le répertoire de données ("DataPOC" pour le jeu de données test et y rapatrier la séquence du genome et les RNASeq, voir ci-dessus "Jeu de données test")
++ Adapter à l'arborescence de fichiers courrante le fichier de paramétrage du pipeline (copier ou éditer le fichier data.yml ; pas d'adaptation dans le cas des données "DataPOC")
 
 ### sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
 
 + Charger les modules nécessaires : `module load slurm-drmaa snakemake fastqc samtools hisat2 `
++ Se placer dans l'espace projet : `cd /shared/projects/... `
 + Lancer le pipeline : `snakemake --drmaa --jobs=4 -s reduction.smk --configfile data.yml `
 
 ### sur un poste de travail unix + conda:
