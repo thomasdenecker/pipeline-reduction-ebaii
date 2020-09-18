@@ -51,7 +51,7 @@ rule extract_reads:
 
 rule hisat2_mapping:
   output:
-    tmp("Tmp/{sample}.bam")
+    temp("Tmp/{sample}.bam")
   input:
 #    R1=config["dataDir"]+"{sample}.fastq.gz" if config["rnaType"]=="single-end" else ??
     expand("Tmp/GenomeIdx/GenomeIdx.{idx}.ht2", idx=IDX),
