@@ -73,4 +73,11 @@ Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
 + Activer cet environement dédié : `conda activate RNASeqReduction`
 + Lancer le pipeline : `snakemake -s reduction.smk --configfile data.yml`
 
+
+## Améliorations
+
++ authoriser les index hisat2 "larges" (génomes de taille > à 4 billion de nucléotides):  les fichiers d'index se terminent par ht2l au lieu de ht2
++ libérer la contrainte "R1/R2.fastq.gz" pour les noms des fichiers pairés : authoriser "1/2" seulement et une variation du suffixe 
+
+
 (à compléter)
