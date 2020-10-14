@@ -46,13 +46,13 @@ Editer afin de modifier les valeurs définies par défaut pour le jeu de donnée
 - chemin d'accès à la séquence fna
 - chemin d'accès au répertoire des fastq.gz à réduire
 - nom du chromosome d'intérêt
-- nombe "n" de premiers reads
+- nombe "n" de premiers reads à conserver
 
 ## Jeu de données test
 
 Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
-- RNAseq paired-end (attention à renommer les "_1." en "_R1.") : [SRR4308679_R1.fastq.gz](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_1.fastq.gz) et [SRR4308679_R2.fastq.gz](ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_2.fastq.gz,) 
-- genome : GCF_000214025.2 [genome.fna](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/214/015/GCF_000214015.3_version_140606/GCF_000214015.3_version_140606_genomic.fna.gz)
+- RNAseq paired-end (attention à renommer les "_1." en "_R1.") SRR4308679_R1.fastq.gz et SRR4308679_R2.fastq.gz : ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_1.fastq.gz ; ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR430/009/SRR4308679/SRR4308679_2.fastq.gz 
+- genome GCF_000214025.2 : [genome.fna](https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/214/015/GCF_000214015.3_version_140606/GCF_000214015.3_version_140606_genomic.fna.gz)
 
 ## Lieu d'utilisation de ce pipeline 
 
@@ -72,5 +72,12 @@ Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
 + Créer un environnement conda dédié (cf. fichier yml) : `conda env create -n RNASeqReduction -f ce_RNASeqReduction.yml`
 + Activer cet environement dédié : `conda activate RNASeqReduction`
 + Lancer le pipeline : `snakemake -s reduction.smk --configfile data.yml`
+
+
+## Améliorations
+
++ authoriser les index hisat2 "larges" (génomes de taille > à 4 billion de nucléotides):  les fichiers d'index se terminent par ht2l au lieu de ht2
++ libérer la contrainte "R1/R2.fastq.gz" pour les noms des fichiers pairés : authoriser "1/2" seulement et une variation du suffixe 
+
 
 (à compléter)
