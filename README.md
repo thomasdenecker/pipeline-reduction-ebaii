@@ -63,7 +63,7 @@ Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
 
 ### sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
 
-+ Charger les modules nécessaires : `module load slurm-drmaa snakemake/6.5.0 fastqc/v0.11.9 samtools/1.15.1 hisat2/2.2.1 `
++ Charger les modules nécessaires : `module load slurm-drmaa snakemake fastqc samtools hisat2`
 + Se placer dans l'espace projet : `cd /shared/projects/... `
 + Lancer le pipeline : `sbatch snakemake --drmaa --jobs=4 -s reduction.smk --configfile data.yml `
 
