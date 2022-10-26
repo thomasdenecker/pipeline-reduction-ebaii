@@ -67,6 +67,13 @@ Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
 + Se placer dans l'espace projet : `cd /shared/projects/... `
 + Lancer le pipeline : `sbatch snakemake --drmaa --jobs=4 -s reduction.smk --configfile data.yml `
 
+#### Versions des logiciels
+
++ snakemake/6.5.0 (testé entre 5.19.2 et 7.7.0)
++ fastqc/v0.11.9 
++ samtools/1.15.1 
++ hisat2/2.2.1
+
 ### sur un poste de travail unix + conda:
 
 + Créer un environnement conda dédié (cf. fichier yml) : `conda env create -n RNASeqReduction -f ce_RNASeqReduction.yml`
@@ -78,13 +85,6 @@ Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
 
 + authoriser les index hisat2 "larges" (génomes de taille > à 4 billion de nucléotides):  les fichiers d'index se terminent par ht2l au lieu de ht2
 + libérer la contrainte "R1/R2.fastq.gz" pour les noms des fichiers pairés : authoriser "1/2" seulement et une variation du suffixe 
-
-## Versions des logiciels
-
-+ snakemake/6.5.0 (testé entre 5.19.2 et 7.7.0)
-+ fastqc/v0.11.9 
-+ samtools/1.15.1 
-+ hisat2/2.2.1
 
 
 
