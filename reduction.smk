@@ -57,12 +57,15 @@ rule hisat2_mapping:
     expand("Tmp/GenomeIdx/GenomeIdx.{idx}.ht2", idx=IDX),
     R1="Tmp/{sample}_R1.fastq",
     R2="Tmp/{sample}_R2.fastq"
+  threads: config["threads_mapping"]
+  resources:
+    cpus=config["threads_mapping"]
   log:
     "Logs/{sample}_bwt2_mapping.log"
   conda: 
     "mapping.yml"
   shell:
-    "hisat2 -x Tmp/GenomeIdx/GenomeIdx -k 1 --no-mixed --rna-strandness FR -1 {input.R1} -2 {input.R2} 2> {log} | samtools view -b -o {output}"
+    "hisat2 -x Tmp/GenomeIdx/GenomeIdx -p {threads} -k 1 --no-mixed --rna-strandness FR -1 {input.R1} -2 {input.R2} 2> {log} | samtools view -@ {threads} -b -o {output}"
 #  run: 
 #    """
 #     if (config["rnaType"]=="paired-end"):
@@ -79,6 +82,8 @@ rule genome_hisat2_index:
     fna=config["genome"]
   params:
     idx="Tmp/GenomeIdx/GenomeIdx"
+  resources:
+    mem_mb=config["mem_index"]
   conda:
     "hisat2.yml"
   log:
