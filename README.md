@@ -41,7 +41,7 @@ Etapes suivies :
 
 ## Paramétrages
 
-Les paramétrages pour le lancement sont réunis dans un fichier yaml. 
+Les paramétrages pour le lancement sont réunis dans un fichier yaml (ex. data.yml). 
 Editer afin de modifier les valeurs définies par défaut pour le jeu de données test :
 - chemin d'accès à la séquence fna
 - chemin d'accès au répertoire des fastq.gz à réduire
@@ -64,8 +64,9 @@ Voici un jeu de données choisi pour tester le bon fonctionement du pipeline :
 ### sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
 
 + Charger les modules nécessaires : `module load slurm-drmaa snakemake fastqc samtools hisat2`
++ S'il n'existe pas déjà un fichier profile "slurm", copier sous `/home/.config/snakemake/slurm.yaml` le fichier exemple (`ifb_slurm_profile.yaml`) 
 + Se placer dans l'espace projet : `cd /shared/projects/... `
-+ Lancer le pipeline : `sbatch snakemake --drmaa --jobs=4 -s reduction.smk --configfile data.yml `
++ Lancer le pipeline : `sbatch snakemake --profile slurm --jobs 4 --cores 4 -s reduction.smk --configfile data.yml `
 
 #### Versions des logiciels
 
