@@ -1,0 +1,7 @@
+jobs: 25
+cluster: "sbatch --mem={resources.mem_mb} -c {resources.cpus} "
+# mem_mb in MB
+default-resources: [cpus=1, mem_mb=1000]
+# limit resources (maximal usable values):
+resources: [cpus=80, mem_mb=500000]
+
