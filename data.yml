@@ -1,3 +1,7 @@
+mem_index:
+   4000 #eg. 4000=4GB
+threads_mapping:
+   8
 genome:
    "DataPOC/genome.fna"
 dataDir:
