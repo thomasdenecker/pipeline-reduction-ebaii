@@ -5,24 +5,24 @@ rule all :
   input :
     expand("FastQC/{sample}_R1_fastqc.html", sample=SAMPLES),
     expand("FastQC/{sample}_R2_fastqc.html", sample=SAMPLES),
-    expand(config["dataRes"]+"{sample}_R{R}_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq.gz", sample=SAMPLES, R=["1","2"])
+    expand(config["dataRes"]+"{sample}_R{R}_"+config["chr"]+"_"+str(config["nbAlignRandom"])+"r_"+str(config["nbAlignChr"])+"c.fastq.gz", sample=SAMPLES, R=["1","2"])
 
 
 rule compress:
   output:
-    config["dataRes"]+"{sampleRed}"+config["chr"]+"_"+str(config["nbAlign"])+".fastq.gz"
+    config["dataRes"]+"{sampleRed}"+config["chr"]+"_"+str(config["nbAlignRandom"])+"r_"+str(config["nbAlignChr"])+"c.fastq.gz"
   input:
-    config["dataRes"]+"{sampleRed}"+config["chr"]+"_"+str(config["nbAlign"])+".fastq"
+    config["dataRes"]+"{sampleRed}"+config["chr"]+"_"+str(config["nbAlignRandom"])+"r_"+str(config["nbAlignChr"])+"c.fastq"
   log:
-    "Logs/compress_{sampleRed}"+config["chr"]+"_"+str(config["nbAlign"])+".log"
+    "Logs/compress_{sampleRed}"+config["chr"]+"_"+str(config["nbAlignRandom"])+"r_"+str(config["nbAlignChr"])+"c.log"
   shell:
     "gzip {input}"    
 
 
 rule create_fastq:
   output:
-    R1=config["dataRes"]+"{sample}_R1_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq",
-    R2=config["dataRes"]+"{sample}_R2_"+config["chr"]+"_"+str(config["nbAlign"])+".fastq" 
+    R1=config["dataRes"]+"{sample}_R1_"+config["chr"]+"_"+str(config["nbAlignRandom"])+"r_"+str(config["nbAlignChr"])+"c.fastq",
+    R2=config["dataRes"]+"{sample}_R2_"+config["chr"]+"_"+str(config["nbAlignRandom"])+"r_"+str(config["nbAlignChr"])+"c.fastq"
   input:
     "Tmp/{sample}_select.sam"
   log:
@@ -32,7 +32,7 @@ rule create_fastq:
   shell:
     "samtools fastq -n -1 {output.R1} -2 {output.R2} Tmp/{wildcards.sample}_select.sam 2> {log} "
 
-
+    
 rule extract_reads:
   output:
     "Tmp/{sample}_select.sam",
@@ -45,8 +45,9 @@ rule extract_reads:
   shell:
     "samtools view -H {input} > {output} 2> {log} ; "
     "set +o pipefail ; "
-    "samtools view {input} | head -n "+str(config["nbAlign"])+" | grep -v "+config["chr"]+" >> {output} 2>> {log} ; "
-    "samtools view {input} | grep "+config["chr"]+" >> {output} 2>> {log} ; "
+    "samtools view {input} | head -n "+str(config["nbAlignRandom"])+" | grep -v "+config["chr"]+" >> {output} 2>> {log} ; "
+    "samtools view {input} | grep "+config["chr"]+" | head -n "+str(config["nbAlignChr"])+" >> {output} 2>> {log} ; "
+
 
 
 rule hisat2_mapping:
