@@ -61,8 +61,8 @@ Le jeu de données choisi pour tester le bon fonctionement du pipeline doit êtr
 
 ### sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
 
-+ Charger les modules nécessaires : `module load slurm-drmaa snakemake fastqc samtools hisat2`
-+ S'il n'existe pas déjà un fichier profile "slurm", copier sous `/home/.config/snakemake/slurm/config.yaml` le fichier donné en exemple (`ifb_slurm_profile.yaml`) 
++ Charger les modules nécessaires : `module load snakemake fastqc samtools hisat2`
++ S'il n'existe pas déjà un fichier profile "slurm", copier sous `~/.config/snakemake/slurm/config.yaml` le fichier donné en exemple (`ifb_slurm_profile.yaml`) 
 + Se placer dans l'espace projet : `cd /shared/projects/... `
 + Lancer le pipeline : `sbatch snakemake --profile slurm --jobs 4 --cores 4 -s reduction.smk --configfile data.yml `
 
