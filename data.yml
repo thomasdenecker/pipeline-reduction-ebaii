@@ -1,7 +1,7 @@
 mem_index:
-   4000 #eg. 4000=4GB
+   4000 # 4000=4GB ; eg. 4GB A.thaliana, 8GB human
 mem_mapping:
-   4000 #eg. 4000=4GB
+   4000 # 4000=4GB ; eg. 4GB A.thaliana, 10GB human
 threads_mapping:
    8
 genome:
