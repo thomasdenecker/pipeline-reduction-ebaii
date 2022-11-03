@@ -60,7 +60,8 @@ rule hisat2_mapping:
     R2="Tmp/{sample}_R2.fastq"
   threads: config["threads_mapping"]
   resources:
-    cpus=config["threads_mapping"]
+    cpus=config["threads_mapping"],
+    mem_mb=config["mem_mapping"]
   log:
     "Logs/{sample}_bwt2_mapping.log"
   conda: 
