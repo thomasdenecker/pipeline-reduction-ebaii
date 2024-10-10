@@ -84,5 +84,5 @@ Le jeu de données choisi pour tester le bon fonctionement du pipeline doit êtr
 
 + mapping d'un des fichiers FASTQ.GZ réduits sur le génome pour vérification (avec hisat2)
 + authoriser les index hisat2 "larges" (génomes de taille > à 4 billion de nucléotides):  les fichiers d'index se terminent par ht2l au lieu de ht2
-+ libérer la contrainte "R1/R2.fastq.gz" pour les noms des fichiers pairés : authoriser "1/2" seulement et une variation du suffixe.
++ libérer la contrainte "R1/R2.fastq.gz" pour les noms des fichiers pairés : authoriser "1/2" seulement et une variation du suffixe 
 

@@ -1,0 +1,11 @@
+# cluster-specific options:
+jobs: 6
+executor: cluster-generic
+cluster-generic-submit-cmd: "qsub -l ncpus={threads} -l mem={resources.mem} -l walltime={resources.time_min}"
+cluster-generic-cancel-cmd: "qdel"
+# software option:
+software-deployment-method: env-modules
+# to avoid typing -p everytime:
+printshellcmds: True
+# set default resources for each job to 1 cpu and 1Gb if not specified otherwise:
+default-resources: [threads=1, mem="1Gb", time_min="02:00:00"]
