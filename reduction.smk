@@ -99,26 +99,28 @@ rule genome_hisat2_index:
 rule fastqc:
   output: 
     "FastQC/{sample}_fastqc.zip",
-    "FastQC/{sample}_fastqc.html"
+    "FastQC/{sample}_fastqc.html",
   input: 
-    "Tmp/{sample}.fastq"
+    fastq = "Tmp/{sample}.fastq",
+    previous_gunzip_ok = "Tmp/{sample}.uncompress.done",
   log:
     log1="Logs/{sample}_fastqc.log1",
     log2="Logs/{sample}_fastqc.log2"
   conda: "ce_RNASeqReduction.yml"
   envmodules: "fastqc"
-  shell: "fastqc --outdir FastQC/ {input} 1>{log.log1} 2>{log.log2}"
+  shell: "fastqc --outdir FastQC/ {input.fastq} 1>{log.log1} 2>{log.log2}"
 
 
 rule uncompress:
   output:
-    temp("Tmp/{sample}.fastq")
+    fastq = temp("Tmp/{sample}.fastq"),
+    gunzip_done = temp(touch("Tmp/{sample}.uncompress.done")), # end check to avoid latency error
   input:
-    config["dataDir"]+"{sample}.fastq.gz"
+    config["dataDir"]+"{sample}.fastq.gz",
   log:
     "Logs/{sample}_uncompress.log"
   run:
-    shell("gunzip -c {input} > {output} ")
+    shell: "gunzip -c {input} > {output.fastq} "
 
 
 
