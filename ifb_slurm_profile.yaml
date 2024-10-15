@@ -1,7 +1,13 @@
-jobs: 25
-cluster: "sbatch --mem={resources.mem_mb} -c {resources.cpus} "
+jobs: 24
+executor: cluster-generic
+cluster-generic-submit-cmd: "sbatch --mem={resources.mem_mb}MB --cpus-per-task={threads}"
+cluster-generic-cancel-cmd: "scancel"
+# software option:
+software-deployment-method: env-modules
+# to avoid typing -p everytime:
+printshellcmds: True
 # mem_mb in MB
-default-resources: [cpus=1, mem_mb=1000]
+default-resources: [threads=1, mem_mb=1000] # 1GB
 # limit resources (maximal usable values):
-resources: [cpus=80, mem_mb=500000]
+resources: [threads=80, mem_mb=50000] # 50BG
 
