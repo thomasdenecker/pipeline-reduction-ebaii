@@ -56,15 +56,15 @@ rule extract_reads:
     "samtools view {input} | grep "+config["chr"]+" | head -n "+str(config["nbAlignChr"])+" >> {output} 2>>{log.err} ; "
 
 
-
 rule hisat2_mapping:
   output:
     temp("Tmp/{sample}.bam"),
   input:
-#    R1=config["dataDir"]+"{sample}.fastq.gz" if config["rnaType"]=="single-end" else ??
     expand("Tmp/GenomeIdx/GenomeIdx.{idx}.ht2", idx=IDX),
     R1="Tmp/{sample}_R1.fastq",
     R2="Tmp/{sample}_R2.fastq",
+  params:
+    sepe=config["rnaType"],
   threads: config["threads_mapping"]
   resources:
     mem_mb=config["mem_mapping"]
@@ -76,14 +76,13 @@ rule hisat2_mapping:
      "hisat2", 
      "samtools",
   shell:
-    "hisat2 -x Tmp/GenomeIdx/GenomeIdx -p {threads} -k 1 --no-mixed --rna-strandness FR -1 {input.R1} -2 {input.R2} 2>{log.err} | samtools view -@ {threads} -b -o {output} 2>>{log.err} "
-#  run: 
-#    """
-#     if (config["rnaType"]=="paired-end"):
-#        shell("hisat2 -x Tmp/GenomeIdx -1 {input.R1} -2 {input.R2} -S {output} 2> {log}")
-#     else:
-#        shell("hisat2 -x Tmp/GenomeIdx -U {input.R1} -S {output} 2> {log}")
-#    """
+    """
+    if [ {params.sepe} = "paire-end" ]; then 
+       hisat2 -x Tmp/GenomeIdx/GenomeIdx -p {threads} -k 1 --no-mixed --rna-strandness FR -1 {input.R1} -2 {input.R2} 2>{log.err} | samtools view -@ {threads} -b -o {output} 2>>{log.err}
+    else # single-end case:
+       hisat2 -x Tmp/GenomeIdx/GenomeIdx -p {threads} -k 1 -U {input.R1} 2>{log.err} | samtools view -@ {threads} -b -o {output} 2>>{log.err}
+    fi
+    """
  
 
 rule genome_hisat2_index:
@@ -106,17 +105,26 @@ rule genome_hisat2_index:
 
 rule fastqc:
   output: 
-    "FastQC/{sample}_fastqc.zip",
-    "FastQC/{sample}_fastqc.html",
+    zip="FastQC/{sample}_fastqc.zip",
+    html="FastQC/{sample}_fastqc.html",
   input: 
     fastq = "Tmp/{sample}.fastq",
     previous_gunzip_ok = "Tmp/{sample}.uncompress.done",
+  params:
+    sepe=config["rnaType"],
   log:
     out="Logs/{sample}_fastqc.out",
     err="Logs/{sample}_fastqc.err",
   conda: config["condaDir"]+"ce_RNASeqReduction.yml",
   envmodules: "fastqc",
-  shell: "fastqc --outdir FastQC/ {input.fastq} 1>{log.out} 2>{log.err}"
+  shell: 
+    """
+    if [ {params.sepe} = "single-end" ]; then 
+       touch {output.zip} {output.html}
+    else    
+       fastqc --outdir FastQC/ {input.fastq} 1>{log.out} 2>{log.err}
+    fi
+    """
 
 
 rule uncompress:
@@ -125,9 +133,18 @@ rule uncompress:
     gunzip_done = temp(touch("Tmp/{sample}.uncompress.done")), # end check to avoid latency error
   input:
     config["dataDir"]+"{sample}.fastq.gz",
+  params:
+    sepe=config["rnaType"],
   log:
     err="Logs/{sample}_uncompress.err",
-  shell: "gunzip -c {input} > {output.fastq} 2>{log.err}"
-
+  shell: 
+    """
+    gunzip -c {input} > {output.fastq} 2>{log.err} ;
+    # single-end case:
+    if [ {params.sepe} = "single-end" ]; then 
+       set +o pipefail ;
+       touch `echo {output.fastq} | awk '{{gsub("R1.fastq","R2.fastq",$0);print $0}}' ` 
+    fi  
+    """
 
 
