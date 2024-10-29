@@ -56,15 +56,16 @@ Le jeu de données choisi pour tester le bon fonctionement du pipeline doit êtr
 
 ### Préparation des fichiers
 
-+ Créer le répertoire de données ("DataPOC" pour le jeu de données test et y rapatrier la séquence du genome et les RNASeq, voir ci-dessus "Jeu de données test")
++ "Jeu de données test" : Créer le répertoire de données ("DataPOC" pour le jeu de données test et y rapatrier la séquence du genome et les RNASeq, voir ci-dessus "Jeu de données test")
++ appliqué à d'autres données : Créer le répertoire de données ("DataPOC") et y placer des liens vers la séquence du génome et les RNAseq (attention, doivent se terminer par `_R1.fastq.gz` (et `_R2.fastq.gz`).
 + Adapter l'arborescence des fichiers dans le fichier de paramétrage du pipeline (éditer le fichier `data.yml` ; pas d'adaptation dans le cas des données "DataPOC")
 
 ### sur le [cluster de l'IFB](https://www.france-bioinformatique.fr/clusters-ifb/)
 
-+ Charger les modules nécessaires : `module load snakemake fastqc samtools hisat2`
++ Charger le module pour snakemake : ` module load snakemake `
 + S'il n'existe pas déjà un fichier profile "slurm", copier sous `~/.config/snakemake/slurm/config.yaml` le fichier donné en exemple (`ifb_slurm_profile.yaml`) 
 + Se placer dans l'espace projet : `cd /shared/projects/... `
-+ Lancer le pipeline : `sbatch snakemake --profile slurm --jobs 4 --cores 4 -s reduction.smk --configfile data.yml `
++ Lancer le pipeline : `sbatch -A <nomDuPojet> snakemake --profile slurm --jobs 4 --cores 4 -p -s reduction.smk --configfile data.yml --use-envmodules `
 
 #### Versions des logiciels
 
@@ -77,7 +78,7 @@ Le jeu de données choisi pour tester le bon fonctionement du pipeline doit êtr
 
 + Créer un environnement conda dédié (cf. `ce_RNASeqReduction.yml`) : `conda env create -n RNASeqReduction -f ce_RNASeqReduction.yml`
 + Activer l'environement dédié : `conda activate RNASeqReduction`
-+ Lancer le pipeline : `snakemake -s reduction.smk --configfile data.yml --useconda`
++ Lancer le pipeline : `snakemake -s reduction.smk --configfile data.yml --use-conda`
 
 
 ## Améliorations
