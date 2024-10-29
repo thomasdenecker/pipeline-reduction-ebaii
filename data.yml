@@ -16,7 +16,8 @@ nbAlignRandom:
    10000
 nbAlignChr:
    1000000
-#rnaType: # "paired-end" or "single-end" (nammed with "R1.fastq.gz" suffixe)
+rnaType: # "paired-end" or "single-end" (nammed with "R1.fastq.gz" suffixe)
 #   paired-end 
+   single-end
 condaDir:
    "condaEnv4Smk/"
